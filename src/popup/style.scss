@@ -1,0 +1,73 @@
+@import "./colors";
+
+body {
+  margin: 0;
+  color: $text;
+}
+
+a {
+  color: $primary;
+  text-decoration: none;
+
+  &.btn-link {
+    color: $primary;
+    font-weight: 600;
+    font-size: 16px;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+button, a.btn {
+  font-size: 16px;
+  font-weight: 600;
+  background-color: $primary;
+  border: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 14px 8px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: $primary-hover;
+  }
+
+  &:focus {
+    box-shadow: none;
+    outline: none;
+  }
+
+  &:disabled {
+    background-color: $primary-disabled;
+  }
+
+  &.btn--outline {
+    background-color: #fff;
+    color: #25243E;
+
+    &:hover {
+      background-color: #F8F9FE;
+    }
+  }
+
+  &.btn--secondary {
+    background-color: $secondary;
+
+    &:hover {
+      background-color: $secondary-hover;
+    }
+
+    &:disabled {
+      background-color: $secondary-disabled;
+    }
+  }
+}
+
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
