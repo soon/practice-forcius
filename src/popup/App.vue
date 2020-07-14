@@ -1,7 +1,7 @@
 <template>
   <div class="popup">
     <h1 v-if="$store.state.userHandle">
-      Welcome back, {{ $store.state.userHandle }}
+      Welcome back, {{ $store.state.userHandle }}!
     </h1>
     <h1 v-else>
       Checking your handle...

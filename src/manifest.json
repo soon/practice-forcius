@@ -10,6 +10,13 @@
     "default_icon": "icon.png",
     "default_popup": "popup.html"
   },
+  "background": {
+    "persistent": false,
+    "scripts": [
+      "js/vendor.js",
+      "js/background.js"
+    ]
+  },
   "permissions": [
     "storage",
     "https://codeforces.com/*",

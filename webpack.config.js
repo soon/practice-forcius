@@ -21,6 +21,7 @@ module.exports = function(env, args) {
   return {
     entry: {
       popup: path.join(popupRoot, 'index.ts'),
+      background: path.join(srcRoot, 'background.ts'),
     },
     output: {
       path: path.join(projectRoot, 'dist'),
@@ -111,6 +112,8 @@ module.exports = function(env, args) {
       }], {copyUnmodified: true, context: projectRoot}),
       new CopyWebpackPlugin([
         'src/icon128.png',
+        'src/icon192.png',
+        'src/icon192-trophy.png',
       ], {copyUnmodified: true, context: projectRoot}),
       new HtmlWebpackPlugin({
         title: 'Popup',
@@ -120,7 +123,6 @@ module.exports = function(env, args) {
       }),
       isDevMode && new ExtensionReloader({
         entries: {
-          contentScript: 'content-scripts/google',
           background: 'background',
           extensionPage: 'popup',
         }

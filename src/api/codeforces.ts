@@ -9,7 +9,7 @@ type ContestDto = {
   type: string;
 }
 
-type ProblemDto = {
+export type ProblemDto = {
   contestId: number;
   index: string;
   name: string;
@@ -71,7 +71,7 @@ class CodeForcesApiImpl {
     return null;
   }
 
-  public async getUnsolvedTaskUrlInRange(handle: string, min: number, max?: number): Promise<string | null> {
+  public async getUnsolvedTaskUrlInRange(handle: string, min: number, max?: number): Promise<ProblemDto | null> {
     const url = 'https://codeforces.com/api/problemset.problems';
     const response = await fetch(url);
     const payload = <ProblemsetProblemsResponse>await response.json();
@@ -93,7 +93,7 @@ class CodeForcesApiImpl {
       if (await this.isProblemSolved(handle, problem.index, problem.contestId)) {
         solvedProblems[problemIdx] = true;
       } else {
-        return `https://codeforces.com/contest/${problem.contestId}/problem/${problem.index}`
+        return problem
       }
     }
 

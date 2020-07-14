@@ -2,7 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import CodeForcesApi from '../api/codeforces';
 import {getUserHandle, setUserHandle} from '../local-storage';
-import {createNotification, updateNotification} from '../utils/notification-utils';
+import {StartProblemTrackerMsg} from '../messages';
+import {getProblemUrl} from '../utils/codeforces-utils';
+import {sendMessage} from '../utils/messages-utils';
 import {createNewTab} from '../utils/tabs-utils';
 
 Vue.use(Vuex);
@@ -12,15 +14,6 @@ type StateType = {
   userHandle: string | null;
 }
 
-function formatTimer(endSeconds: number): string {
-  const now = Math.floor(new Date().getTime() / 1000);
-  if (endSeconds < now) {
-    return '';
-  }
-  const minutes = Math.floor((endSeconds - now) / 60);
-  const seconds = (endSeconds - now) % 60;
-  return `${minutes}:${String(seconds).padStart(2, '0')} remaining`;
-}
 
 export const store = new Vuex.Store<StateType>({
   state: {
@@ -53,32 +46,16 @@ export const store = new Vuex.Store<StateType>({
       }
       commit('setSelectingProblem', true);
       try {
-        const url = await CodeForcesApi.getUnsolvedTaskUrlInRange(this.state.userHandle, rating.min, rating.max);
-        if (url) {
-          const endSeconds = Math.floor(new Date().getTime() / 1000 + 5 * 60);
-          const notificationId = await createNotification({
-            type: 'basic',
-            title: 'Go go go!',
-            message: formatTimer(endSeconds),
-            iconUrl: 'icon128.png',
-            requireInteraction: true,
-            silent: true,
-            buttons: [],
-          });
-          const intervalId = setInterval(updateNotificationText, 500);
-
-          async function updateNotificationText() {
-            const now = Math.floor(new Date().getTime() / 1000);
-            if (now > endSeconds) {
-              clearInterval(intervalId)
-            } else {
-              await updateNotification(notificationId, {
-                message: formatTimer(endSeconds)
-              });
-            }
-          }
-
-          await createNewTab({url});
+        const problem = await CodeForcesApi.getUnsolvedTaskUrlInRange(this.state.userHandle, rating.min, rating.max);
+        if (problem) {
+          sendMessage<StartProblemTrackerMsg>({
+            kind: 'StartProblemTrackerMsg',
+            handle: this.state.userHandle,
+            problemIndex: problem.index,
+            contestId: problem.contestId,
+            timerDurationSeconds: 15 * 60
+          })
+          await createNewTab({url: getProblemUrl(problem)});
         }
       } finally {
         commit('setSelectingProblem', false);
