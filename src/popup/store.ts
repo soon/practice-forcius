@@ -58,7 +58,7 @@ export const store = new Vuex.Store<StateType>({
       commit('setUserHandle', handle);
     },
 
-    async findUnsolvedProblem({commit}, {rating}: { rating: { min: number; max?: number } }) {
+    async findUnsolvedProblem({commit}, {rating, timer}: { rating: { min: number; max?: number }, timer: number }) {
       if (this.state.selectingProblem) {
         return;
       }
@@ -71,7 +71,7 @@ export const store = new Vuex.Store<StateType>({
             handle: this.state.userHandle,
             problemIndex: problem.index,
             contestId: problem.contestId,
-            timerDurationSeconds: this.getters.useTimer ? 15 * 60 : null,
+            timerDurationSeconds: this.getters.useTimer ? timer : null,
             minRating: rating.min,
             maxRating: rating.max,
           });
