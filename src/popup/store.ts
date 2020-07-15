@@ -12,6 +12,7 @@ type StateType = {
   selectingProblem: boolean;
   userSettings: UserSettings | null;
   userHandle: string | null;
+  isUserHandleRequested: boolean;
 }
 
 export const store = new Vuex.Store<StateType>({
@@ -19,6 +20,7 @@ export const store = new Vuex.Store<StateType>({
     selectingProblem: false,
     userSettings: null,
     userHandle: null,
+    isUserHandleRequested: false,
   },
   getters: {
     useTimer(state): boolean {
@@ -29,6 +31,10 @@ export const store = new Vuex.Store<StateType>({
     async setUserHandle(state, handle: string | null) {
       state.userHandle = handle;
       await setUserHandle(handle);
+    },
+
+    async setIsUserHandleRequested(state, value: boolean) {
+      state.isUserHandleRequested = value;
     },
 
     async setSelectingProblem(state, value: boolean) {
@@ -56,6 +62,7 @@ export const store = new Vuex.Store<StateType>({
     async requestUserHandle({commit}) {
       const handle = await CodeForcesApi.getUserHandle();
       commit('setUserHandle', handle);
+      commit('setIsUserHandleRequested', true);
     },
 
     async findUnsolvedProblem({commit}, {rating, timer}: { rating: { min: number; max?: number }, timer: number }) {

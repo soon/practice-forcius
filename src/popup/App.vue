@@ -3,34 +3,40 @@
     <h1 v-if="$store.state.userHandle">
       Welcome back, {{ $store.state.userHandle }}!
     </h1>
-    <h1 v-else>
+    <h2 v-else-if="!$store.state.isUserHandleRequested">
       Checking your handle...
-    </h1>
+    </h2>
+    <template v-else>
+      <h2>Seems like you're not logged in on CodeForces. <a href="https://codeforces.com/enter" target="_blank">
+        Login Now</a>
+      </h2>
+    </template>
+    <template v-if="$store.state.userHandle">
+      <div class="levels-btns-list">
+        <button
+          v-for="level in problemRatingLevels"
+          :key="level.title"
+          class="problem-level-btn"
+          :disabled="$store.state.selectingProblem"
+          @click="findProblemWithLevel(level)"
+        >
+          <fa icon="bolt"/>
+          {{ level.title }}
+        </button>
+      </div>
 
-    <div class="levels-btns-list">
-      <button
-        v-for="level in problemRatingLevels"
-        :key="level.title"
-        class="problem-level-btn"
-        :disabled="$store.state.selectingProblem"
-        @click="findProblemWithLevel(level)"
-      >
-        <fa icon="bolt"/>
-        {{ level.title }}
-      </button>
-    </div>
-
-    <div class="checkbox">
-      <label for="use-timer-checkbox">
-        <input
-          type="checkbox"
-          id="use-timer-checkbox"
-          :checked="$store.getters.useTimer"
-          v-on:change="setUseTimer(!$store.getters.useTimer)">
-        <span>Use Timer</span>
-      </label>
-    </div>
-    <small v-if="$store.state.selectingProblem">Selecting a problem...</small>
+      <div class="checkbox">
+        <label for="use-timer-checkbox">
+          <input
+            type="checkbox"
+            id="use-timer-checkbox"
+            :checked="$store.getters.useTimer"
+            v-on:change="setUseTimer(!$store.getters.useTimer)">
+          <span>Use Timer</span>
+        </label>
+      </div>
+      <small v-if="$store.state.selectingProblem">Selecting a problem...</small>
+    </template>
   </div>
 </template>
 
