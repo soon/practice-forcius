@@ -19,7 +19,7 @@
         {{ level.title }}
       </button>
     </div>
-    <small v-if="$store.state.selectingProblem">Selecting problem...</small>
+    <small v-if="$store.state.selectingProblem">Selecting a problem...</small>
   </div>
 </template>
 
@@ -49,7 +49,7 @@
         rating: {
           min: level.range[0],
           max: level.range[1],
-        }
+        },
       });
     }
   }

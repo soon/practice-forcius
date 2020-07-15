@@ -4,5 +4,5 @@ type Problem = {
 }
 
 export function getProblemUrl({contestId, index}: Problem): string {
-  return `https://codeforces.com/contest/${contestId}/problem/${index}`
+  return `https://codeforces.com/contest/${contestId}/problem/${index}`;
 }

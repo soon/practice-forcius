@@ -8,8 +8,10 @@ export type StartProblemTrackerMsg = Message & {
   problemIndex: string;
   contestId: number;
   timerDurationSeconds?: number;
+  minRating: number;
+  maxRating?: number;
 }
 
 export function isStartProblemTrackerMsg(msg: Message): msg is StartProblemTrackerMsg {
-  return msg.kind === 'StartProblemTrackerMsg'
+  return msg.kind === 'StartProblemTrackerMsg';
 }

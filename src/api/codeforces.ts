@@ -52,20 +52,20 @@ function getRandomInt(max) {
 class CodeForcesApiImpl {
   protected async accessApiEndpoint<T>(name: string, params?: object): Promise<T> {
     const search = new URLSearchParams(Object.entries(params ?? {})).toString();
-    const response = await fetch(`https://codeforces.com/api/${name}?${search}`)
+    const response = await fetch(`https://codeforces.com/api/${name}?${search}`);
     return await response.json();
   }
 
   public async getUserHandle(): Promise<string | null> {
     const baseUrl = 'https://codeforces.com/profile/';
-    const response = await fetch(baseUrl)
+    const response = await fetch(baseUrl);
     if (!response.url) {
       return null;
     }
     if (response.url.startsWith(baseUrl)) {
       const handle = response.url.substring(baseUrl.length).trim();
       if (handle.length > 0) {
-        return handle
+        return handle;
       }
     }
     return null;
@@ -74,9 +74,9 @@ class CodeForcesApiImpl {
   public async getUnsolvedTaskUrlInRange(handle: string, min: number, max?: number): Promise<ProblemDto | null> {
     const url = 'https://codeforces.com/api/problemset.problems';
     const response = await fetch(url);
-    const payload = <ProblemsetProblemsResponse>await response.json();
+    const payload = <ProblemsetProblemsResponse> await response.json();
     const problems = payload.result.problems.filter(
-      ({rating}) => rating != null && rating >= min && (rating <= (max ?? rating))
+      ({rating}) => rating != null && rating >= min && (rating <= (max ?? rating)),
     );
     if (problems.length === 0) {
       return null;
@@ -84,7 +84,7 @@ class CodeForcesApiImpl {
     const maxAttempts = 10;
     const solvedProblems = {};
     for (let i = 0; i < maxAttempts; ++i) {
-      let problemIdx = getRandomInt(problems.length);
+      const problemIdx = getRandomInt(problems.length);
       if (solvedProblems[problemIdx]) {
         continue;
       }
@@ -93,7 +93,7 @@ class CodeForcesApiImpl {
       if (await this.isProblemSolved(handle, problem.index, problem.contestId)) {
         solvedProblems[problemIdx] = true;
       } else {
-        return problem
+        return problem;
       }
     }
 
@@ -112,7 +112,7 @@ class CodeForcesApiImpl {
     if (problemArrayIndex < 0) {
       return false;
     }
-    return data.result.rows.some(x => x.problemResults[problemArrayIndex].points > 0)
+    return data.result.rows.some(x => x.problemResults[problemArrayIndex].points > 0);
   }
 }
 

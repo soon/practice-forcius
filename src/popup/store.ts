@@ -3,9 +3,7 @@ import Vuex from 'vuex';
 import CodeForcesApi from '../api/codeforces';
 import {getUserHandle, setUserHandle} from '../local-storage';
 import {StartProblemTrackerMsg} from '../messages';
-import {getProblemUrl} from '../utils/codeforces-utils';
 import {sendMessage} from '../utils/messages-utils';
-import {createNewTab} from '../utils/tabs-utils';
 
 Vue.use(Vuex);
 
@@ -53,9 +51,10 @@ export const store = new Vuex.Store<StateType>({
             handle: this.state.userHandle,
             problemIndex: problem.index,
             contestId: problem.contestId,
-            timerDurationSeconds: 15 * 60
-          })
-          await createNewTab({url: getProblemUrl(problem)});
+            timerDurationSeconds: 15 * 60,
+            minRating: rating.min,
+            maxRating: rating.max,
+          });
         }
       } finally {
         commit('setSelectingProblem', false);

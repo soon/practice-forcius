@@ -44,6 +44,11 @@ rules:
         - warn
         - error
   no-debugger: error
+  quotes:
+    - error
+    - 'single'
+    - allowTemplateLiterals: true
+      avoidEscape: true
 
 overrides:
   - files: ['*.vue']
