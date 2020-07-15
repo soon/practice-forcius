@@ -36,9 +36,7 @@ function formatTimer(endSeconds: number): string {
 
 async function cancelTimerNotification() {
   const {timerIntervalId, timerNotificationId} = state.tracker;
-  if (timerIntervalId != null) {
-    clearInterval(timerIntervalId);
-  }
+  clearInterval(timerIntervalId);
   if (timerNotificationId != null) {
     await clearNotification(timerNotificationId);
   }
@@ -47,9 +45,7 @@ async function cancelTimerNotification() {
 async function cancelCurrentTracker() {
   const {problemStatusIntervalId, congratulationsNotificationId} = state.tracker;
   await cancelTimerNotification();
-  if (problemStatusIntervalId != null) {
-    clearInterval(problemStatusIntervalId);
-  }
+  clearInterval(problemStatusIntervalId);
   if (congratulationsNotificationId != null) {
     await clearNotification(congratulationsNotificationId);
   }
@@ -79,11 +75,12 @@ async function handleStartProblemTrackerMsg(msg: StartProblemTrackerMsg) {
   });
   await cancelCurrentTracker();
   const {handle, problemIndex, contestId, timerDurationSeconds} = msg;
+  const isTimerEnabled = timerDurationSeconds != null;
   const endSeconds = Math.floor(new Date().getTime() / 1000 + timerDurationSeconds);
   const notificationId = await createNotification({
     type: 'basic',
-    title: 'Go go go!',
-    message: formatTimer(endSeconds),
+    title: isTimerEnabled ? 'Go go go!' : `A new problem to solve!`,
+    message: isTimerEnabled ? formatTimer(endSeconds) : 'Take your time!',
     iconUrl: 'icon192.png',
     requireInteraction: true,
     silent: true,
@@ -91,7 +88,7 @@ async function handleStartProblemTrackerMsg(msg: StartProblemTrackerMsg) {
   });
   state.tracker.timerNotificationId = notificationId;
 
-  const timerIntervalId = window.setInterval(updateNotificationText, 500);
+  const timerIntervalId = isTimerEnabled ? window.setInterval(updateNotificationText, 500) : null;
   state.tracker.timerIntervalId = timerIntervalId;
   const problemStatusIntervalId = window.setInterval(checkProblemStatus, 2000);
   state.tracker.problemStatusIntervalId = problemStatusIntervalId;

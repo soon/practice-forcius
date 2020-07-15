@@ -19,6 +19,17 @@
         {{ level.title }}
       </button>
     </div>
+
+    <div class="checkbox">
+      <label for="use-timer-checkbox">
+        <input
+          type="checkbox"
+          id="use-timer-checkbox"
+          :checked="$store.getters.useTimer"
+          v-on:change="setUseTimer(!$store.getters.useTimer)">
+        <span>Use Timer</span>
+      </label>
+    </div>
     <small v-if="$store.state.selectingProblem">Selecting a problem...</small>
   </div>
 </template>
@@ -52,6 +63,10 @@
         },
       });
     }
+
+    async setUseTimer(value: boolean) {
+      await this.$store.dispatch('setUseTimer', value);
+    }
   }
 </script>
 
@@ -75,11 +90,29 @@
     justify-content: space-between;
     margin-left: -4px;
     margin-right: -4px;
+    margin-bottom: 2px;
   }
 
   .problem-level-btn {
     flex-grow: 1;
     flex-basis: 86px;
     margin: 4px;
+  }
+
+  .checkbox {
+    label {
+      display: inline-block;
+      padding-right: 10px;
+      white-space: nowrap;
+
+      span {
+        vertical-align: middle;
+      }
+    }
+
+    input {
+      vertical-align: middle;
+      margin-left: 1px;
+    }
   }
 </style>
