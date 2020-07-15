@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Practice Forcius",
-  "description": "An extension to use your practice forces.",
+  "description": "A CodeForces extension to quickly pick up a task and solve it.",
   "version": "0.1.0",
   "icons": {
     "128": "icon128.png"
