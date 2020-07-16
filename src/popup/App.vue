@@ -36,6 +36,7 @@
         </label>
       </div>
       <small v-if="$store.state.selectingProblem">Selecting a problem...</small>
+      <div v-if="$store.state.error" class="error">{{ $store.state.error }}</div>
     </template>
   </div>
 </template>

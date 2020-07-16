@@ -13,6 +13,7 @@ type StateType = {
   userSettings: UserSettings | null;
   userHandle: string | null;
   isUserHandleRequested: boolean;
+  error: string;
 }
 
 export const store = new Vuex.Store<StateType>({
@@ -21,6 +22,7 @@ export const store = new Vuex.Store<StateType>({
     userSettings: null,
     userHandle: null,
     isUserHandleRequested: false,
+    error: '',
   },
   getters: {
     useTimer(state): boolean {
@@ -39,6 +41,14 @@ export const store = new Vuex.Store<StateType>({
 
     async setSelectingProblem(state, value: boolean) {
       state.selectingProblem = value;
+    },
+
+    async setError(state, value: string) {
+      state.error = value;
+    },
+
+    async clearError(state) {
+      state.error = '';
     },
 
     async setUserSettings(state, value: UserSettings | null) {
@@ -69,6 +79,7 @@ export const store = new Vuex.Store<StateType>({
       if (this.state.selectingProblem) {
         return;
       }
+      commit('clearError');
       commit('setSelectingProblem', true);
       try {
         const problem = await CodeForcesApi.getUnsolvedTaskUrlInRange(this.state.userHandle, rating.min, rating.max);
@@ -82,6 +93,8 @@ export const store = new Vuex.Store<StateType>({
             minRating: rating.min,
             maxRating: rating.max,
           });
+        } else {
+          commit('setError', 'Unable to find a problem, try different rating level.');
         }
       } finally {
         commit('setSelectingProblem', false);

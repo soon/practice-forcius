@@ -71,3 +71,12 @@ input:focus {
   outline: none;
   box-shadow: none;
 }
+
+.error {
+  margin-top: 4px;
+  margin-bottom: 4px;
+  border-radius: 2px;
+  padding: 6px 8px;
+  background-color: $error-background;
+  color: $error-text;
+}
