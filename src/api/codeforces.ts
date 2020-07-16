@@ -83,18 +83,18 @@ class CodeForcesApiImpl {
   public async getUnsolvedTaskUrlInRange(handle: string, min: number, max?: number): Promise<ProblemDto | null> {
     const problemsResponse = await this.accessApiEndpoint<ProblemsetProblemsResponse>('problemset.problems');
     const userSubmissions = await this.accessApiEndpoint<UserStatusResponse>('user.status', {
-      handle
+      handle,
     });
     const solvedTasks = {};
     userSubmissions.result.forEach(({problem, verdict}) => {
       if (verdict === 'OK') {
         solvedTasks[`${problem.contestId}:${problem.index}`] = true;
       }
-    })
+    });
     const problems = problemsResponse.result.problems.filter(
       ({contestId, index, rating}) => (
         rating != null && rating >= min && (rating <= (max ?? rating)) && solvedTasks[`${contestId}:${index}`] == null
-      )
+      ),
     );
     if (problems.length === 0) {
       return null;

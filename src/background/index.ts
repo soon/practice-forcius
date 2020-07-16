@@ -35,7 +35,7 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
         );
         await clearNotification(notificationId);
         if (problem == null) {
-          await createUnableToFindProblemNotification()
+          await createUnableToFindProblemNotification();
         } else {
           sendMessage<StartProblemTrackerMsg>({
             kind: lastMsg.kind,

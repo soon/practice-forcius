@@ -27,7 +27,7 @@ async function cancelCurrentTracker() {
 
 export async function startProblemTrackerMsg(msg: StartProblemTrackerMsg) {
   await updateState(x => {
-    x.lastStartProblemMsg = msg
+    x.lastStartProblemMsg = msg;
   });
   await createNewTab({
     url: getProblemUrl({
@@ -43,19 +43,19 @@ export async function startProblemTrackerMsg(msg: StartProblemTrackerMsg) {
   );
   const hardLimitSeconds = new Date().getTime() / 1000 + 2 * 60 * 60;
   await updateState(x => {
-    x.tracker.endSeconds = endSeconds
+    x.tracker.endSeconds = endSeconds;
   });
-  const timerNotificationId = await createTimerNotification(endSeconds)
+  const timerNotificationId = await createTimerNotification(endSeconds);
   await updateState(x => {
-    x.tracker.timerNotificationId = timerNotificationId
+    x.tracker.timerNotificationId = timerNotificationId;
   });
   const timerIntervalId = window.setInterval(updateNotificationText, 500);
   await updateState(x => {
-    x.tracker.timerIntervalId = timerIntervalId
+    x.tracker.timerIntervalId = timerIntervalId;
   });
   const problemStatusIntervalId = window.setInterval(checkProblemStatus, 2000);
   await updateState(x => {
-    x.tracker.problemStatusIntervalId = problemStatusIntervalId
+    x.tracker.problemStatusIntervalId = problemStatusIntervalId;
   });
 
   const cancelTimer = () => {
@@ -68,7 +68,7 @@ export async function startProblemTrackerMsg(msg: StartProblemTrackerMsg) {
     if (now > endSeconds || now > hardLimitSeconds) {
       cancelTimer();
     } else if (isTimerEnabled) {
-      await updateTimerNotification(timerNotificationId, endSeconds)
+      await updateTimerNotification(timerNotificationId, endSeconds);
     }
   }
 
@@ -78,7 +78,7 @@ export async function startProblemTrackerMsg(msg: StartProblemTrackerMsg) {
       await clearNotification(timerNotificationId);
       const congratulationsNotificationId = await createProblemSolvedNotification();
       await updateState(x => {
-        x.tracker.congratulationsNotificationId = congratulationsNotificationId
+        x.tracker.congratulationsNotificationId = congratulationsNotificationId;
       });
     }
   }

@@ -21,8 +21,8 @@ export function getDefaultState(): State {
       timerNotificationId: null,
       problemStatusIntervalId: null,
       congratulationsNotificationId: null,
-    }
-  }
+    },
+  };
 }
 
 export async function updateState(fn: (state: State) => void) {
@@ -38,5 +38,5 @@ export async function getState(): Promise<State> {
 }
 
 async function setState(state: State): Promise<void> {
-  await setLocal(BG_STATE_LS_KEY, state)
+  await setLocal(BG_STATE_LS_KEY, state);
 }
