@@ -83,13 +83,17 @@ export const store = new Vuex.Store<StateType>({
       commit('setSelectingProblem', true);
       try {
         const problem = await CodeForcesApi.getUnsolvedTaskUrlInRange(this.state.userHandle, rating.min, rating.max);
+        let timer = null;
+        if (this.getters.useTimer) {
+          timer = Math.max(Math.ceil(problem.rating * 11 / 400 - 45 / 2), 5) * 60;
+        }
         if (problem) {
           sendMessage<StartProblemTrackerMsg>({
             kind: 'StartProblemTrackerMsg',
             handle: this.state.userHandle,
             problemIndex: problem.index,
             contestId: problem.contestId,
-            timerDurationSeconds: this.getters.useTimer ? timer : null,
+            timerDurationSeconds: timer,
             minRating: rating.min,
             maxRating: rating.max,
           });

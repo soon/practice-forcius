@@ -49,12 +49,12 @@
   @Component
   export default class App extends Vue {
     problemRatingLevels = [
-      {title: '1k', range: [750, 1250], timer: 5 * 60},
-      {title: '1.5k', range: [1250, 1750], timer: 10 * 60},
-      {title: '2k', range: [1750, 2250], timer: 15 * 60},
-      {title: '2.5k', range: [2250, 2750], timer: 20 * 60},
-      {title: '3k', range: [2750, 3250], timer: 30 * 60},
-      {title: '>3k', range: [3250, null], timer: 45 * 60},
+      {title: '1k', range: [750, 1250]},
+      {title: '1.5k', range: [1250, 1750]},
+      {title: '2k', range: [1750, 2250]},
+      {title: '2.5k', range: [2250, 2750]},
+      {title: '3k', range: [2750, 3250]},
+      {title: '>3k', range: [3250, null]},
     ];
 
     async created() {
