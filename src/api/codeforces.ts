@@ -45,6 +45,15 @@ type ContestStandingsResponse = {
   }
 }
 
+type UserStatusResponse = {
+  result: {
+    contestId: number;
+    contest: ContestDto;
+    problem: ProblemDto;
+    verdict: string;
+  }[]
+}
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -72,32 +81,26 @@ class CodeForcesApiImpl {
   }
 
   public async getUnsolvedTaskUrlInRange(handle: string, min: number, max?: number): Promise<ProblemDto | null> {
-    const url = 'https://codeforces.com/api/problemset.problems';
-    const response = await fetch(url);
-    const payload = <ProblemsetProblemsResponse> await response.json();
-    const problems = payload.result.problems.filter(
-      ({rating}) => rating != null && rating >= min && (rating <= (max ?? rating)),
+    const problemsResponse = await this.accessApiEndpoint<ProblemsetProblemsResponse>('problemset.problems');
+    const userSubmissions = await this.accessApiEndpoint<UserStatusResponse>('user.status', {
+      handle
+    });
+    const solvedTasks = {};
+    userSubmissions.result.forEach(({problem, verdict}) => {
+      if (verdict === 'OK') {
+        solvedTasks[`${problem.contestId}:${problem.index}`] = true;
+      }
+    })
+    const problems = problemsResponse.result.problems.filter(
+      ({contestId, index, rating}) => (
+        rating != null && rating >= min && (rating <= (max ?? rating)) && solvedTasks[`${contestId}:${index}`] == null
+      )
     );
     if (problems.length === 0) {
       return null;
     }
-    const maxAttempts = 10;
-    const solvedProblems = {};
-    for (let i = 0; i < maxAttempts; ++i) {
-      const problemIdx = getRandomInt(problems.length);
-      if (solvedProblems[problemIdx]) {
-        continue;
-      }
-
-      const problem = problems[problemIdx];
-      if (await this.isProblemSolved(handle, problem.index, problem.contestId)) {
-        solvedProblems[problemIdx] = true;
-      } else {
-        return problem;
-      }
-    }
-
-    return null;
+    const problemIdx = getRandomInt(problems.length);
+    return problems[problemIdx];
   }
 
   public async isProblemSolved(handle: string, problemIndex: string, contestId: number): Promise<boolean> {
