@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import CodeForcesApi from '../api/codeforces';
-import {getUserHandle, getUserSettings, setUserHandle, setUserSettings} from '../local-storage';
 import {StartProblemTrackerMsg} from '../messages';
-import {UserSettings} from '../user-settings';
 import {sendMessage} from '../utils/messages-utils';
+import {getUserHandle, getUserSettings, setUserHandle, setUserSettings} from './local-storage';
+import {UserSettings} from './user-settings';
 
 Vue.use(Vuex);
 
@@ -75,7 +75,7 @@ export const store = new Vuex.Store<StateType>({
       commit('setIsUserHandleRequested', true);
     },
 
-    async findUnsolvedProblem({commit}, {rating, timer}: { rating: { min: number; max?: number }, timer: number }) {
+    async findUnsolvedProblem({commit}, {rating}: { rating: { min: number; max?: number } }) {
       if (this.state.selectingProblem) {
         return;
       }

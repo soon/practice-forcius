@@ -10,6 +10,7 @@ const Dotenv = require('dotenv-webpack');
 const projectRoot = __dirname;
 const srcRoot = path.join(projectRoot, 'src');
 const popupRoot = path.join(srcRoot, 'popup');
+const backgroundRoot = path.join(srcRoot, 'background');
 
 
 function filterNotFalsy(values) {
@@ -21,7 +22,7 @@ module.exports = function(env, args) {
   return {
     entry: {
       popup: path.join(popupRoot, 'index.ts'),
-      background: path.join(srcRoot, 'background.ts'),
+      background: path.join(backgroundRoot, 'index.ts'),
     },
     output: {
       path: path.join(projectRoot, 'dist'),
