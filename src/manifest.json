@@ -20,7 +20,6 @@
   "permissions": [
     "storage",
     "https://codeforces.com/*",
-    "activeTab",
     "notifications"
   ]
 }
