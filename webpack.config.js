@@ -5,7 +5,6 @@ const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtensionReloader = require('webpack-extension-reloader');
-const Dotenv = require('dotenv-webpack');
 
 const projectRoot = __dirname;
 const srcRoot = path.join(projectRoot, 'src');
@@ -87,9 +86,6 @@ module.exports = function(env, args) {
       extensions: ['.ts', '.tsx', '.js'],
     },
     plugins: filterNotFalsy([
-      new Dotenv({
-        safe: true,
-      }),
       new VueLoaderPlugin(),
       new CleanWebpackPlugin(),
       new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
