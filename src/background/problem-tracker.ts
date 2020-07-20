@@ -1,10 +1,12 @@
 import CodeForcesApi from '../api/codeforces';
 import {StartProblemTrackerMsg} from '../messages';
-import {getProblemUrl} from '../utils/codeforces-utils';
+import {getProblemUrl, getWsChannelUrl} from '../utils/codeforces-utils';
 import {clearNotification} from '../utils/notification-utils';
 import {createNewTab} from '../utils/tabs-utils';
 import {createProblemSolvedNotification, createTimerNotification, updateTimerNotification} from './notifications';
 import {getState, updateState} from './state';
+
+let currentWs: WebSocket | null = null;
 
 export async function cancelTimerNotification() {
   const state = await getState();
@@ -23,6 +25,9 @@ async function cancelCurrentTracker() {
   if (congratulationsNotificationId != null) {
     await clearNotification(congratulationsNotificationId);
   }
+  if (currentWs != null) {
+    currentWs.close();
+  }
 }
 
 export async function startProblemTrackerMsg(msg: StartProblemTrackerMsg) {
@@ -36,7 +41,7 @@ export async function startProblemTrackerMsg(msg: StartProblemTrackerMsg) {
     }),
   });
   await cancelCurrentTracker();
-  const {handle, problemIndex, contestId, timerDurationSeconds} = msg;
+  const {handle, problemIndex, problemId, contestId, timerDurationSeconds} = msg;
   const isTimerEnabled = timerDurationSeconds != null;
   const endSeconds = (
     timerDurationSeconds == null ? null : Math.floor(new Date().getTime() / 1000 + timerDurationSeconds)
@@ -53,15 +58,36 @@ export async function startProblemTrackerMsg(msg: StartProblemTrackerMsg) {
   await updateState(x => {
     x.tracker.timerIntervalId = timerIntervalId;
   });
-  const problemStatusIntervalId = window.setInterval(checkProblemStatus, 2000);
+  const problemStatusIntervalId = window.setInterval(checkProblemStatus, 60 * 1000);
   await updateState(x => {
     x.tracker.problemStatusIntervalId = problemStatusIntervalId;
   });
+  const contestChannel = await CodeForcesApi.getUserShowMessageChannelId(contestId);
+  const socket = new WebSocket(getWsChannelUrl(contestChannel));
+  currentWs = socket;
+  socket.addEventListener('message', async function(event) {
+    const payload = JSON.parse(event.data);
+    const body = JSON.parse(payload.text);
+    const {t, d} = body;
+    if (t === 's' && d[6] === 'OK' && d[2] === contestId && String(d[3]) === problemId) {
+      await handleProblemSolved();
+    }
+  });
 
-  const cancelTimer = () => {
+  function cancelTimer() {
     clearInterval(timerIntervalId);
     clearInterval(problemStatusIntervalId);
-  };
+    currentWs.close();
+  }
+
+  async function handleProblemSolved() {
+    cancelTimer();
+    await clearNotification(timerNotificationId);
+    const congratulationsNotificationId = await createProblemSolvedNotification();
+    await updateState(x => {
+      x.tracker.congratulationsNotificationId = congratulationsNotificationId;
+    });
+  }
 
   async function updateNotificationText() {
     const now = Math.floor(new Date().getTime() / 1000);
@@ -74,12 +100,7 @@ export async function startProblemTrackerMsg(msg: StartProblemTrackerMsg) {
 
   async function checkProblemStatus() {
     if (await CodeForcesApi.isProblemSolved(handle, problemIndex, contestId)) {
-      cancelTimer();
-      await clearNotification(timerNotificationId);
-      const congratulationsNotificationId = await createProblemSolvedNotification();
-      await updateState(x => {
-        x.tracker.congratulationsNotificationId = congratulationsNotificationId;
-      });
+      await handleProblemSolved();
     }
   }
 }

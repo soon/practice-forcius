@@ -30,7 +30,7 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
       const lastMsg = state.lastStartProblemMsg;
       if (lastMsg != null) {
         const notificationId = await createSelectingProblemNotification();
-        const problem = await CodeForcesApi.getUnsolvedTaskUrlInRange(
+        const problem = await CodeForcesApi.getUnsolvedTaskInRange(
           lastMsg.handle, lastMsg.minRating, lastMsg.maxRating,
         );
         await clearNotification(notificationId);
@@ -40,6 +40,7 @@ chrome.notifications.onButtonClicked.addListener(async (notificationId, buttonIn
           sendMessage<StartProblemTrackerMsg>({
             kind: lastMsg.kind,
             handle: lastMsg.handle,
+            problemId: problem.id,
             problemIndex: problem.index,
             contestId: problem.contestId,
             timerDurationSeconds: lastMsg.timerDurationSeconds,

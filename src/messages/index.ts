@@ -5,6 +5,7 @@ export type Message = {
 export type StartProblemTrackerMsg = Message & {
   kind: 'StartProblemTrackerMsg',
   handle: string;
+  problemId: string;
   problemIndex: string;
   contestId: number;
   timerDurationSeconds?: number;

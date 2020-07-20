@@ -1,3 +1,5 @@
+import {getContestUrl, getProblemUrl} from '../utils/codeforces-utils';
+
 type ContestDto = {
   durationSeconds: number;
   frozen: boolean
@@ -80,7 +82,9 @@ class CodeForcesApiImpl {
     return null;
   }
 
-  public async getUnsolvedTaskUrlInRange(handle: string, min: number, max?: number): Promise<ProblemDto | null> {
+  public async getUnsolvedTaskInRange(
+    handle: string, min: number, max?: number,
+  ): Promise<ProblemDto & { id: string } | null> {
     const problemsResponse = await this.accessApiEndpoint<ProblemsetProblemsResponse>('problemset.problems');
     const userSubmissions = await this.accessApiEndpoint<UserStatusResponse>('user.status', {
       handle,
@@ -100,7 +104,11 @@ class CodeForcesApiImpl {
       return null;
     }
     const problemIdx = getRandomInt(problems.length);
-    return problems[problemIdx];
+    const problem = problems[problemIdx];
+    return {
+      id: await this.getProblemId(problem.index, problem.contestId),
+      ...problem,
+    };
   }
 
   public async isProblemSolved(handle: string, problemIndex: string, contestId: number): Promise<boolean> {
@@ -116,6 +124,20 @@ class CodeForcesApiImpl {
       return false;
     }
     return data.result.rows.some(x => x.problemResults[problemArrayIndex].points > 0);
+  }
+
+  public async getProblemId(problemIndex: string, contestId: number): Promise<string> {
+    const response = await fetch(getProblemUrl({contestId, index: problemIndex}));
+    const text = await response.text();
+    const m = text.match(/<input *name="problemId".*value="(?<problemId>\d+)".*>/);
+    return m.groups['problemId'] ?? '';
+  }
+
+  public async getUserShowMessageChannelId(contestId: number): Promise<string> {
+    const response = await fetch(getContestUrl(contestId));
+    const text = await response.text();
+    const m = text.match(/<meta *name="usmc".*content="(?<channel>.+)".*>/);
+    return m.groups['channel'] ?? '';
   }
 }
 
