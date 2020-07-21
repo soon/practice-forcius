@@ -56,6 +56,11 @@ type UserStatusResponse = {
   }[]
 }
 
+type WsChannels = {
+  userMessages: string;
+  participant: string;
+}
+
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
@@ -133,10 +138,22 @@ class CodeForcesApiImpl {
     return m.groups['problemId'] ?? '';
   }
 
-  public async getUserShowMessageChannelId(contestId: number): Promise<string> {
+  public async getWsChannels(contestId: number): Promise<WsChannels> {
     const response = await fetch(getContestUrl(contestId));
     const text = await response.text();
+    return {
+      userMessages: CodeForcesApiImpl.getUserMessagesChannel(text),
+      participant: CodeForcesApiImpl.getParticipantChannel(text),
+    };
+  }
+
+  private static getUserMessagesChannel(text: string) {
     const m = text.match(/<meta *name="usmc".*content="(?<channel>.+)".*>/);
+    return m.groups['channel'] ?? '';
+  }
+
+  private static getParticipantChannel(text: string) {
+    const m = text.match(/<meta *name="pc".*content="(?<channel>.+)".*>/);
     return m.groups['channel'] ?? '';
   }
 }

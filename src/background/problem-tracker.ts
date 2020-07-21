@@ -1,6 +1,6 @@
 import CodeForcesApi from '../api/codeforces';
 import {StartProblemTrackerMsg} from '../messages';
-import {getProblemUrl, getWsChannelUrl} from '../utils/codeforces-utils';
+import {getProblemUrl, getWsChannelsUrl} from '../utils/codeforces-utils';
 import {clearNotification} from '../utils/notification-utils';
 import {createNewTab} from '../utils/tabs-utils';
 import {createProblemSolvedNotification, createTimerNotification, updateTimerNotification} from './notifications';
@@ -62,8 +62,8 @@ export async function startProblemTrackerMsg(msg: StartProblemTrackerMsg) {
   await updateState(x => {
     x.tracker.problemStatusIntervalId = problemStatusIntervalId;
   });
-  const contestChannel = await CodeForcesApi.getUserShowMessageChannelId(contestId);
-  const socket = new WebSocket(getWsChannelUrl(contestChannel));
+  const channels = await CodeForcesApi.getWsChannels(contestId);
+  const socket = new WebSocket(getWsChannelsUrl(['s_' + channels.participant, channels.userMessages]));
   currentWs = socket;
   socket.addEventListener('message', async function(event) {
     const payload = JSON.parse(event.data);

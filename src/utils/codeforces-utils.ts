@@ -11,7 +11,7 @@ export function getContestUrl(contestId: number): string {
   return `https://codeforces.com/contest/${contestId}`;
 }
 
-export function getWsChannelUrl(channel: string) {
+export function getWsChannelsUrl(channels: string[]) {
   const now = new Date().getTime();
-  return `wss://pubsub.codeforces.com/ws/${channel}?_=${now}&tag=&time=&eventid=`;
+  return `wss://pubsub.codeforces.com/ws/${channels.join('/')}?_=${now}&tag=&time=&eventid=`;
 }
